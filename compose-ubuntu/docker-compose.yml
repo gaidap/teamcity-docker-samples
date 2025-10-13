@@ -9,17 +9,19 @@ version: '3.1'
 # ./agents/agent-1/conf - configuration directory for the first build agent
 # ./agents/agent-1/conf - configuration directory for the second build agent
 
+volumes:
+  pgdata:
+
 services:
   db:
-    image: postgres:latest
+    image: postgres:${PG_VERSION}
     restart: always
     environment:
       - POSTGRES_PASSWORD=teamcity_password
       - POSTGRES_USER=teamcity_user
       - POSTGRES_DB=teamcity_db
-      - PG_DATA=/var/lib/postgresql/data
     volumes:
-      - ./buildserver_pgdata:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/${TEAMCITY_VERSION}/docker
     ports:
       - 5433:5432
 
