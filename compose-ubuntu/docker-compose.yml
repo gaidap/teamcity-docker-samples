@@ -21,7 +21,7 @@ services:
       - POSTGRES_USER=teamcity_user
       - POSTGRES_DB=teamcity_db
     volumes:
-      - pgdata:/var/lib/postgresql/${TEAMCITY_VERSION}/docker
+      - pgdata:/var/lib/postgresql/${PG_VERSION}/docker
     ports:
       - 5433:5432
 
