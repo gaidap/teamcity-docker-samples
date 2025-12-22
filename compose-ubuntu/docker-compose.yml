@@ -21,31 +21,60 @@ services:
       - POSTGRES_USER=teamcity_user
       - POSTGRES_DB=teamcity_db
     volumes:
-      - pgdata:/var/lib/postgresql/${PG_VERSION}/docker
+      - pgdata:/var/lib/postgresql/${PG_VERSION}/docker 
     ports:
       - 5433:5432
+    networks:
+      - teamcity_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   teamcity:
     image: jetbrains/teamcity-server:${TEAMCITY_VERSION}
+    environment:
+      - TEAMCITY_CONTEXT=/team-city      
     ports:
       - "8112:8111"
     volumes:
-      - ./data_dir:/data/teamcity_server/datadir
-      - ./teamcity-server-logs:/opt/teamcity/logs
+      - ./data_dir:/data/teamcity_server/datadir:Z
+      - ./teamcity-server-logs:/opt/teamcity/logs:Z
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - teamcity_net
+
 
   teamcity-agent-1:
     image: jetbrains/teamcity-agent:${TEAMCITY_VERSION}-linux-sudo
     privileged: true
     volumes:
-      - ./agents/agent-1/conf:/data/teamcity_agent/conf
+      - ./agents/agent-1/conf:/data/teamcity_agent/conf:Z
     environment:
       - DOCKER_IN_DOCKER=start
+    networks:
+      - teamcity_net
+
+
   teamcity-agent-2:
     image: jetbrains/teamcity-agent:${TEAMCITY_VERSION}-linux-sudo
     privileged: true
     volumes:
-      - ./agents/agent-2/conf:/data/teamcity_agent/conf
+      - ./agents/agent-2/conf:/data/teamcity_agent/conf:Z
     environment:
       - DOCKER_IN_DOCKER=start
+    networks:
+      - teamcity_net
+
+volumes:
+  pgdata:
+
+networks:
+  teamcity_net:
+    driver: bridge
+
+
+

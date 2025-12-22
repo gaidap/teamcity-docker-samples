@@ -1,0 +1,3 @@
+!compose-ubuntu/data_dir/database.properties
+compose-ubuntu/teamcity-server-logs/*
+compose-ubuntu/data_dir/*
