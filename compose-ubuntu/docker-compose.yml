@@ -36,6 +36,7 @@ services:
     image: jetbrains/teamcity-server:${TEAMCITY_VERSION}
     environment:
       - TEAMCITY_CONTEXT=/team-city      
+    restart: always    
     ports:
       - "8112:8111"
     volumes:
@@ -51,6 +52,7 @@ services:
   teamcity-agent-1:
     image: jetbrains/teamcity-agent:${TEAMCITY_VERSION}-linux-sudo
     privileged: true
+    restart: always  
     volumes:
       - ./agents/agent-1/conf:/data/teamcity_agent/conf:Z
     environment:
@@ -62,6 +64,7 @@ services:
   teamcity-agent-2:
     image: jetbrains/teamcity-agent:${TEAMCITY_VERSION}-linux-sudo
     privileged: true
+    restart: always
     volumes:
       - ./agents/agent-2/conf:/data/teamcity_agent/conf:Z
     environment:
@@ -75,6 +78,3 @@ volumes:
 networks:
   teamcity_net:
     driver: bridge
-
-
-
